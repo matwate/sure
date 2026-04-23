@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import pytest
-from main import Err, Maybe, Ok, Result, safe, sure
 
+from main import Err, Ok, Result, Slot, safe, sure
 
 # ── Ok ────────────────────────────────────────────────────────────────
 
@@ -133,24 +133,24 @@ class TestSafe:
 
 class TestSure:
     def test_success_path(self):
-        m = Maybe()
+        m = Slot()
         with sure(m):
             m.result = Ok("done")
         assert m.result == Ok("done")
 
     def test_exception_path(self):
-        m = Maybe()
+        m = Slot()
         with sure(m):
             raise ValueError("oops")
         assert m.result.is_err()
         assert isinstance(m.result.err(), ValueError)
 
     def test_default_is_err(self):
-        m = Maybe()
+        m = Slot()
         assert m.result.is_err()
 
     def test_nested_exceptions(self):
-        m = Maybe()
+        m = Slot()
         with sure(m):
             m.result = Ok("partial")
             raise RuntimeError("late fail")
@@ -172,18 +172,12 @@ class TestChaining:
         assert result == Err("stop")
 
     def test_and_then_chain(self):
-        result = (
-            Ok(10)
-            .and_then(lambda x: Ok(x + 5))
-            .and_then(lambda x: Ok(str(x)))
-        )
+        result = Ok(10).and_then(lambda x: Ok(x + 5)).and_then(lambda x: Ok(str(x)))
         assert result == Ok("15")
 
     def test_and_then_chain_err_short_circuits(self):
         result: Result[int, str] = (
-            Ok(10)
-            .and_then(lambda _: Err("halt"))
-            .and_then(lambda x: Ok(x + 1))
+            Ok(10).and_then(lambda _: Err("halt")).and_then(lambda x: Ok(x + 1))
         )
         assert result == Err("halt")
 
@@ -199,7 +193,7 @@ class TestChaining:
         assert res.is_err()
 
     def test_sure_with_risky_ops(self):
-        m = Maybe()
+        m = Slot()
 
         def risky(x):
             if x < 0:

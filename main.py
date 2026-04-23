@@ -90,7 +90,7 @@ class Err[T, E]:
         return f"Err({self.value!r})"
 
 
-class Maybe[T, E]:
+class Slot[T, E]:
     result: Result[T, E] = Err(None)  # type: ignore
 
 
@@ -105,7 +105,7 @@ def safe[**P, T, E](func: Callable[P, T]) -> Callable[P, Result[T, E]]:
 
 
 @contextmanager
-def sure[T, E](maybe: Maybe[T, E]):
+def sure[T, E](maybe: Slot[T, E]):
     """
     Usage:
         res = Maybe()
