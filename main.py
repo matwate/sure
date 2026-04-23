@@ -8,9 +8,11 @@ class Ok[T, E]:
     def __init__(self, value: T):
         self.value = value
 
+    @property
     def is_ok(self):
         return True
 
+    @property
     def is_err(self):
         return False
 
@@ -49,9 +51,11 @@ class Err[T, E]:
     def __init__(self, value: E):
         self.value = value
 
+    @property
     def is_ok(self):
         return False
 
+    @property
     def is_err(self):
         return True
 
