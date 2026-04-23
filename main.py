@@ -4,6 +4,12 @@ from typing import Callable
 type Result[T, E] = Ok[T, E] | Err[T, E]
 
 
+class UnwrapError(Exception):
+    """Error thrown when unwrap() on an error."""
+
+    pass
+
+
 class Ok[T, E]:
     def __init__(self, value: T):
         self.value = value
@@ -75,7 +81,7 @@ class Err[T, E]:
         return self
 
     def unwrap(self):
-        raise ValueError(self.value)
+        raise UnwrapError(f"called unwrap on {self.__repr__()}")
 
     def unwrap_or(self, value: T):
         return value
