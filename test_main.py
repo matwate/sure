@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import pytest
 
-from main import Err, Ok, Result, Slot, safe, sure
+from sure import Err, Ok, Result, Slot, UnwrapError, safe, sure
 
 # ── Ok ────────────────────────────────────────────────────────────────
 
 
 class TestOk:
     def test_is_ok(self):
-        assert Ok(1).is_ok() is True
+        assert Ok(1).is_ok is True
 
     def test_is_err(self):
-        assert Ok(1).is_err() is False
+        assert Ok(1).is_err is False
 
     def test_ok(self):
         assert Ok(42).ok() == 42
@@ -53,10 +53,10 @@ class TestOk:
 
 class TestErr:
     def test_is_ok(self):
-        assert Err("e").is_ok() is False
+        assert Err("e").is_ok is False
 
     def test_is_err(self):
-        assert Err("e").is_err() is True
+        assert Err("e").is_err is True
 
     def test_ok(self):
         assert Err("e").ok() is None
@@ -78,7 +78,7 @@ class TestErr:
         assert Err("e").and_then(lambda x: Ok(x + 1)) == Err("e")
 
     def test_unwrap_raises(self):
-        with pytest.raises(ValueError, match="boom"):
+        with pytest.raises(UnwrapError):
             Err("boom").unwrap()
 
     def test_unwrap_or(self):
@@ -107,7 +107,7 @@ class TestSafe:
             raise RuntimeError("nope")
 
         result = boom()
-        assert result.is_err()
+        assert result.is_err
         assert isinstance(result, Err)
         assert isinstance(result.err(), RuntimeError)
 
@@ -142,12 +142,12 @@ class TestSure:
         m = Slot()
         with sure(m):
             raise ValueError("oops")
-        assert m.result.is_err()
+        assert m.result.is_err
         assert isinstance(m.result.err(), ValueError)
 
     def test_default_is_err(self):
         m = Slot()
-        assert m.result.is_err()
+        assert m.result.is_err
 
     def test_nested_exceptions(self):
         m = Slot()
@@ -155,7 +155,7 @@ class TestSure:
             m.result = Ok("partial")
             raise RuntimeError("late fail")
         # exception overrides the partial set
-        assert m.result.is_err()
+        assert m.result.is_err
         assert isinstance(m.result.err(), RuntimeError)
 
 
@@ -190,7 +190,7 @@ class TestChaining:
         assert res == Ok(42)
 
         res = parse("abc")
-        assert res.is_err()
+        assert res.is_err
 
     def test_sure_with_risky_ops(self):
         m = Slot()

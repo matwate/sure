@@ -43,6 +43,9 @@ class Ok[T, E]:
     def unwrap_or(self, value: T):
         return self.value
 
+    def expect(self, msg: str):
+        return self.value
+
     def set(self, value: T):
         self.value = value
 
@@ -85,6 +88,9 @@ class Err[T, E]:
 
     def unwrap_or(self, value: T):
         return value
+
+    def expect(self, msg: str):
+        raise UnwrapError(msg)
 
     def set(self, value: E):
         self.value = value
