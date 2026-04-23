@@ -38,6 +38,12 @@ class Ok[T, E]:
     def set(self, value: T):
         self.value = value
 
+    def __eq__(self, other):
+        return isinstance(other, Ok) and self.value == other.value
+
+    def __repr__(self):
+        return f"Ok({self.value!r})"
+
 
 class Err[T, E]:
     def __init__(self, value: E):
@@ -72,6 +78,12 @@ class Err[T, E]:
 
     def set(self, value: E):
         self.value = value
+
+    def __eq__(self, other):
+        return isinstance(other, Err) and self.value == other.value
+
+    def __repr__(self):
+        return f"Err({self.value!r})"
 
 
 class Maybe[T, E]:
